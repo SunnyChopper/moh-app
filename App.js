@@ -20,8 +20,8 @@ import MasterNavigator from './navigation/MasterNavigator';
 	Reducers
 \* -------------------- */
 
-import rootReducer from './reducers/rootReducer';
-const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
+import RootReducer from './store/reducers/RootReducer';
+const store = createStore(RootReducer, applyMiddleware(ReduxThunk));
 
 /* -------------------- *\
 	Fonts
