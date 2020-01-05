@@ -22,6 +22,10 @@ import RewardsScreen from '../screens/member/RewardsScreen';
 import ProfileScreen from '../screens/member/ProfileScreen';
 import HabitDetailsScreen from '../screens/member/HabitDetailsScreen';
 import AddHabitScreen from '../screens/member/AddHabitScreen';
+import AddHabitLevelScreen from '../screens/member/AddHabitLevelScreen';
+import HabitLogsScreen from '../screens/member/HabitLogsScreen';
+import RewardDetailsScreen from '../screens/member/RewardDetailsScreen';
+import RegisterScreen from '../screens/RegisterScreen';
 
 /* ---------------------- *\
 	Constants 
@@ -55,12 +59,21 @@ const HabitsStackNavigator = createStackNavigator({
 	},
 	AddHabit: {
 		screen: AddHabitScreen
+	},
+	HabitLogs: {
+		screen: HabitLogsScreen
+	},
+	AddHabitLevel: {
+		screen: AddHabitLevelScreen
 	}
 });
 
 const RewardsStackNavigator = createStackNavigator({
 	Rewards: {
 		screen: RewardsScreen
+	},
+	RewardDetails: {
+		screen: RewardDetailsScreen
 	}
 });
 
@@ -71,7 +84,8 @@ const ProfileStackNavigator = createStackNavigator({
 });
 
 const LoginNavigator = createSwitchNavigator({
-	Login: LoginScreen
+	Login: LoginScreen,
+	Register: RegisterScreen
 });
 
 const homeTabConfig = {
