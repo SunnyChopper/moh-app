@@ -4,16 +4,16 @@ import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 import CustomHeaderButton from '../../components/base/CustomHeaderButton';
 import Colors from '../../constants/Colors';
-import RewardBox from '../../components/base/RewardBox';
+import RewardCard from '../../components/base/RewardCard';
 
 const RewardsScreen = props => {
 	return (
 		<View style={styles.screen}>
 			<ScrollView style={styles.scrollView}>
-				<RewardBox completed="true" title="30 minutes of Call of Duty" description="I get to play 30 minutes of Call of Duty Modern Warfare." timestamp="Dec 3rd" status="Earned" />
-				<RewardBox completed="false" title="30 minutes of Twitter" description="I get to be on Twitter for 30 minutes." timestamp="Dec 3rd" status="Not earned" />
-				<RewardBox completed="false" title="30 minutes of hanging out" description="I get to be on hang out with my friends for 30 minutes." timestamp="Dec 3rd" status="Not earned" />
-				<RewardBox completed="true" title="Coffee from Dunkin'" description="I get to get myself my favorite coffee from Dunkin'" timestamp="Dec 3rd" status="Earned" />
+				<RewardCard title="Call of Duty" description="I get to play 30 minutes of Call of Duty Modern Warfare." points="50" />
+				<RewardCard title="Twitter" description="I get to be on Twitter for 30 minutes." points="50" />
+				<RewardCard title="Hangout w/ Friends" description="I get to hang out with my friends for 2 hours." points="150" />
+				<RewardCard title="Coffee from Dunkin'" description="I get my favorite coffee from Dunkin'." points="75" />
 			</ScrollView>
 		</View>
 	);

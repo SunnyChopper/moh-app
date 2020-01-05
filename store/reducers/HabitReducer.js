@@ -1,6 +1,6 @@
 import {
 	CREATE_HABIT,
-	READ_HABIT
+	READ_HABIT,
 	UPDATE_HABIT,
 	DELETE_HABIT,
 	GET_HABITS_FOR_USER
@@ -36,7 +36,7 @@ export default (state = initialState, action) => {
 				habits: newHabits
 			};
 		case DELETE_HABIT:
-			const newHabits = state.habits;
+			newHabits = state.habits;
 			for (var i = 0; i < newHabits.length; i++) {
 				if (newHabits[i].id == action.payload.id) {
 					newHabits.splice(i, 1);

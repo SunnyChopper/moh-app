@@ -1,9 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-import Input from '../components/base/Input';
-
-import MainStyleSheet from '../styles/MainStyleSheet';
+import MainStyleSheet from '../../styles/MainStyleSheet';
 
 const HabitLogsScreen = props => {
 	return (

@@ -8,7 +8,7 @@ import {
 
 import axios from 'axios';
 
-export default createLog = (log) => {
+export const createLog = (log) => {
 	return (dispatch) => {
 		axios.post('https://mindofhabit.com/api/app-habit-logs/create', {log}).then(function(response) {
 			dispatch({ type: CREATE_LOG, payload: log });
@@ -16,7 +16,7 @@ export default createLog = (log) => {
 	};
 };
 
-export default deleteLog = (logID) => {
+export const deleteLog = (logID) => {
 	return (dispatch) => {
 		axios.post('https://mindofhabit.com/api/app-habit-logs/delete', {log}).then(function(response) {
 			dispatch({ type: DELETE_LOG, payload: logID });
@@ -24,7 +24,7 @@ export default deleteLog = (logID) => {
 	};
 };
 
-export default getLogsForUser = (userID) => {
+export const getLogsForUser = (userID) => {
 	return (dispatch) => {
 		axios.get('https://mindofhabit.com/api/app-habit-logs/get-for-user?userID=' + userID).then(function(response) {
 			dispatch({ type: GET_LOGS_FOR_USER, payload: response });
@@ -32,14 +32,14 @@ export default getLogsForUser = (userID) => {
 	};
 };
 
-export default getLogsForHabit = (habitID) => {
+export const getLogsForHabit = (habitID) => {
 	return {
 		type: GET_LOGS_FOR_HABIT,
 		payload: habitID
 	};
 };
 
-export default getLogsForLevel = (levelID) => {
+export const getLogsForLevel = (levelID) => {
 	return {
 		type: GET_LOGS_FOR_LEVEL,
 		payload: levelID

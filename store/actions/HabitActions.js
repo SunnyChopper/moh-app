@@ -8,7 +8,7 @@ import {
 
 import axios from 'axios';
 
-export default createHabit = (habit) => {
+export const createHabit = (habit) => {
 	return (dispatch) => {
 		axios.post('https://mindofhabit.com/api/app-habits/create', {habit}).then(function(response) {
 			dispatch({ type: CREATE_HABIT, payload: habit });
@@ -16,14 +16,14 @@ export default createHabit = (habit) => {
 	};
 };
 
-export default readHabit = (habitID) => {
+export const readHabit = (habitID) => {
 	return {
 		type: READ_HABIT,
 		payload: habitID
 	};
 };
 
-export default updateHabit = (habit) => {
+export const updateHabit = (habit) => {
 	return (dispatch) => {
 		axios.post('https://mindofhabit.com/api/app-habits/update', {habit}).then(function(response) {
 			dispatch({ type: UPDATE_HABIT, payload: habit });
@@ -31,7 +31,7 @@ export default updateHabit = (habit) => {
 	};
 };
 
-export default deleteHabit = (habitID) => {
+export const deleteHabit = (habitID) => {
 	return (dispatch) => {
 		axios.post('https://mindofhabit.com/api/app-habits/delete', { habit_id: habitID }).then(function(response) {
 			dispatch({ type: DELETE_HABIT, payload: habitID });
@@ -39,7 +39,7 @@ export default deleteHabit = (habitID) => {
 	};
 };
 
-export default getHabitsForUser = (userID) => {
+export const getHabitsForUser = (userID) => {
 	return (dispatch) => {
 		axios.get('https://mindofhabit.com/api/app-habits/get-for-user?userID=' + userID).then(function(response) {
 			dispatch({ type: GET_HABITS_FOR_USER, payload: response });

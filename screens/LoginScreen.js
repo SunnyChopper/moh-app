@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TouchableWithoutFeedback, Alert, Keyboard, KeyboardAvoidingView, Image, View, Text, TextInput, StyleSheet } from 'react-native';
-import * as userActions from '../actions/UsersActions';
+import * as UserActions from '../store/actions/UserActions';
 import { useDispatch } from 'react-redux';
 
 import Card from '../components/base/Card';

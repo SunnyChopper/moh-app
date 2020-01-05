@@ -1,4 +1,4 @@
-import { combineReducer } from 'redux';
+import { combineReducers } from 'redux';
 
 import HabitLevelReducer from './HabitLevelReducer';
 import HabitLogReducer from './HabitLogReducer';

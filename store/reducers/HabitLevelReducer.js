@@ -36,7 +36,7 @@ export default (state = initialState, action) => {
 				levels: newLevels
 			};
 		case DELETE_LEVEL:
-			const newLevels = state.levels;
+			newLevels = state.levels;
 			for (var i = 0; i < newLevels.length; i++) {
 				if (newLevels[i].id == action.payload.id) {
 					newLevels.splice(i, 1);

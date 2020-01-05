@@ -16,7 +16,7 @@ export default (state = initialState, action) => {
 		case CREATE_REWARD:
 			return {
 				...state,
-				rewards: rewards.push(action.payload);
+				rewards: rewards.push(action.payload)
 			};
 		case READ_REWARD:
 			return {
@@ -36,7 +36,7 @@ export default (state = initialState, action) => {
 				rewards: newRewards
 			};
 		case DELETE_REWARD:
-			const newRewards = state.rewards;
+			newRewards = state.rewards;
 			for (var i = 0; i < newRewards.length; i++) {
 				if (newRewards[i].id == action.payload.id) {
 					newRewards.splice(i, 1);
