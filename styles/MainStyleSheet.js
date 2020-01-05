@@ -128,6 +128,11 @@ const MainStyleSheet = StyleSheet.create({
 		fontSize: 16,
 		fontFamily: 'montserrat-light',
 		marginBottom: 2
+	},
+	text: {
+		fontSize: 14,
+		fontFamily: 'montserrat-light',
+		marginBottom: 2
 	}
 });
 
