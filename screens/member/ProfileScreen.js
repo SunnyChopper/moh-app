@@ -1,7 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { AsyncStorage, View, Text, StyleSheet, ScrollView } from 'react-native';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import { useDispatch } from 'react-redux';
 
+import { logoutUser } from '../../store/actions/UserActions';
+
+import CustomHeaderButton from '../../components/base/CustomHeaderButton';
 import BlogCard from '../../components/base/BlogCard';
+
 import Colors from '../../constants/Colors';
 import MainStyleSheet from '../../styles/MainStyleSheet';
 
@@ -52,6 +58,39 @@ const ProfileScreen = props => {
 	);
 };
 
+ProfileScreen.navigationOptions = navData => {
+	const logout = () => {
+		useDispatch(logoutUser());
+	};
+
+	return {
+		headerTitle: 'Your Profile',
+		headerStyle: {
+            backgroundColor: Colors.backgroundDark,
+            borderBottomColor: 'black',
+            borderBottomWidth: 0,
+        },
+        headerTitleStyle: {
+            color: 'white'
+        },
+        headerTintColor: Colors.accent,
+        headerRight: (
+        	<HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+        		<Item
+        			title="Logout"
+        			onPress = {() => {
+        				AsyncStorage.setItem('is_logged_in', JSON.stringify(true));
+
+						AsyncStorage.setItem('current_user', JSON.stringify([]));
+
+						navData.navigation.navigate('Login');
+        			}}
+        		/>
+        	</HeaderButtons>
+        )
+	};
+};
+
 const styles = StyleSheet.create({
 	screen: {
 		width: '100%',
@@ -92,19 +131,5 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 8,
 	}
 });
-
-ProfileScreen.navigationOptions = navData => {
-	return {
-		headerTitle: 'Your Profile',
-		headerStyle: {
-            backgroundColor: Colors.backgroundDark,
-            borderBottomColor: 'black',
-            borderBottomWidth: 0,
-        },
-        headerTitleStyle: {
-            color: 'white'
-        }
-	};
-};
 
 export default ProfileScreen;

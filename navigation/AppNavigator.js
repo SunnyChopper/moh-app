@@ -26,6 +26,7 @@ import AddHabitLevelScreen from '../screens/member/AddHabitLevelScreen';
 import HabitLogsScreen from '../screens/member/HabitLogsScreen';
 import RewardDetailsScreen from '../screens/member/RewardDetailsScreen';
 import RegisterScreen from '../screens/RegisterScreen';
+import AddRewardScreen from '../screens/member/AddRewardScreen';
 
 /* ---------------------- *\
 	Constants 
@@ -74,6 +75,9 @@ const RewardsStackNavigator = createStackNavigator({
 	},
 	RewardDetails: {
 		screen: RewardDetailsScreen
+	},
+	AddReward: {
+		screen: AddRewardScreen
 	}
 });
 

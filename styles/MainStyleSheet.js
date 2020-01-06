@@ -133,6 +133,16 @@ const MainStyleSheet = StyleSheet.create({
 		fontSize: 14,
 		fontFamily: 'montserrat-light',
 		marginBottom: 2
+	},
+	boldtext: {
+		fontSize: 14,
+		fontFamily: 'montserrat-bold',
+		marginBottom: 2
+	},
+	scrollView: {
+		width: '100%',
+		height: '100%',
+		flexDirection: 'column'
 	}
 });
 

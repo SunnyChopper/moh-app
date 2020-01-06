@@ -7,11 +7,11 @@ import RewardReducer from './RewardReducer';
 import UserReducer from './UserReducer';
 
 const RootReducer = combineReducers({
-	HabitLevelReducer,
-	HabitLogReducer,
-	HabitReducer,
-	RewardReducer,
-	UserReducer
+	levels: HabitLevelReducer,
+	logs: HabitLogReducer,
+	habits: HabitReducer,
+	rewards: RewardReducer,
+	user: UserReducer
 });
 
 export default RootReducer;

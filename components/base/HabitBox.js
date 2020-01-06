@@ -7,7 +7,7 @@ import Colors from '../../constants/Colors';
 
 const HabitBox = props => {
 	return (
-		<TouchableWithoutFeedback onPress={props.cardPress}>
+		<TouchableWithoutFeedback onPress={props.cardPress.bind(this, props)}>
 			<View style={{...MainStyleSheet.container, ...styles.habitBox}}>
 				<View style={MainStyleSheet.row}>
 					<View style={{...MainStyleSheet.colOne, marginBottom: 12}}>
@@ -24,7 +24,7 @@ const HabitBox = props => {
 
 const styles = StyleSheet.create({
 	habitBox: {
-		backgroundColor: 'white',
+		backgroundColor: '#F7F7F7',
 		padding: 16,
 		marginVertical: 16,
 		shadowColor: '#000',

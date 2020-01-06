@@ -39,7 +39,7 @@ const MasterNavigator = props => {
 		} else {
 			navRef.current.dispatch(
 				NavigationActions.navigate({
-					routeName : 'Home'
+					routeName : 'Login'
 				})
 			);
 		}

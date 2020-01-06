@@ -1,8 +1,12 @@
 // Users
 export const CREATE_USER = 'create_user';
 export const LOGIN_USER = 'login_user';
+export const LOGOUT_USER = 'logout_user';
+export const ERROR_LOGGING_IN = 'error_logging_in';
+export const CLEAR_ERROR = 'clear_error';
 export const UPDATE_USER = 'update_user';
 export const DELETE_USER = 'delete_user';
+export const OVERWRITE_USER = 'overwrite_user';
 export const REDEEM_REWARD = 'redeem_reward';
 
 // Habits

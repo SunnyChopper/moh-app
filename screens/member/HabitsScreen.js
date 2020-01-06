@@ -1,27 +1,101 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, Platform } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { readHabit, getHabitsForUser } from '../../store/actions/HabitActions';
+
+import Card from '../../components/base/Card';
 import CustomHeaderButton from '../../components/base/CustomHeaderButton';
 import HabitBox from '../../components/base/HabitBox';
+import PrimaryButton from '../../components/base/PrimaryButton';
+
+import MainStyleSheet from '../../styles/MainStyleSheet';
 import Colors from '../../constants/Colors'
 
 const HabitsScreen = props => {
+	const dispatch = useDispatch();
+
+	const [noHabits, setNoHabits] = useState(false);
+
+	const currentUserID = useSelector(state => state.user.current_user_id);
+	const habitArray = useSelector(state => state.habits.habits);
+	const habitIDs = useSelector(state => state.habits.habit_ids);
+
+	const showHabitDetailsScreen = (habit) => {
+		const habitID = habit.id;
+
+		// Update Redux value for usage in habit details screen
+		dispatch(readHabit(habitID));
+
+		props.navigation.navigate('HabitDetails');
+	};
+
+	const renderMachine = (key) => {
+		switch (key) {
+			case "render_habits":
+				return habitIDs.map((id) => {
+					return (
+						<HabitBox cardPress={showHabitDetailsScreen} id={id} key={id} title={habitArray[id].title} description={habitArray[id].description} level={habitArray[id].level} priority={habitArray[id].priority} points={habitArray[id].points} />  
+					);
+				});
+			case "render_empty":
+				return (
+					<Card>
+						<View style={{...MainStyleSheet.row, marginBottom: 8}}>
+							<View style={MainStyleSheet.colOne}>
+								<Text style={MainStyleSheet.headingTwo}>No Habits</Text>
+								<Text style={MainStyleSheet.text}>No habits were found in your profile. Click below to get started.</Text>
+							</View>
+						</View>
+
+						<View style={MainStyleSheet.row}>
+							<View style={MainStyleSheet.colOneHalf}>
+								<PrimaryButton title="Create Habit" onPress={() => { props.navigation.navigate('AddHabit'); }} />
+							</View>
+						</View>
+					</Card>
+				);
+			default: return null;
+		}
+	};	
+
+	const habits = habitIDs.map((id) => {
+		if (noHabits == false) {
+			return (
+				<HabitBox cardPress={showHabitDetailsScreen} id={id} key={id} title={habitArray[id].title} description={habitArray[id].description} level={habitArray[id].level} priority={habitArray[id].priority} points={habitArray[id].points} />  
+			);
+		}
+	});
+
 	const markComplete = () => {
 		console.log('Mark complete.');
 	};
 
-	const showHabitDetailsScreen = () => {
-		console.log('Show details');
-		props.navigation.navigate('HabitDetails');
-	};
+	// Fired once current user ID is pulled in from state
+	useEffect(() => {
+		if (currentUserID > 0 && currentUserID != null) {
+			console.log('Getting habits for user with ID: ' + currentUserID);
+			dispatch(getHabitsForUser(currentUserID));
+		}
+	}, [currentUserID]);
+
+	// Fired once habits array is populated
+	useEffect(() => {
+		if (habitArray.length > 0) {
+			console.log('Have some habits to work with...');
+		} else {
+			console.log('No habits to work with...');
+			setNoHabits(true);
+		}
+	}, [habitArray]);
+
+	// Fired once no habits have been found
 
 	return (
 		<View style={styles.screen}>
 			<ScrollView style={styles.scrollView}>
-				<HabitBox cardPress={showHabitDetailsScreen} title="Run Half a Mile" description="I want to get in better shape and get my endurance back." priority="High" level="1" points="25" />
-				<HabitBox cardPress={showHabitDetailsScreen} title="Read 3 Chapters" description="I want to start learning more so I can apply it in my life." priority="High" level="2" points="35" />
-				<HabitBox title="10 Pieces of Content for Instagram" description="I want to create more content for my Instagram so I can build my brand." priority="Medium" level="1" points="25" onPress={markComplete} />				
+				{noHabits == true ? renderMachine("render_empty") : renderMachine("render_habits")}
 			</ScrollView>
 		</View>
 	);

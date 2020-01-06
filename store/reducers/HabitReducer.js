@@ -8,6 +8,7 @@ import {
 
 const initialState = {
 	current_habit_id: 0,
+	habit_ids: [],
 	habits: []	
 };
 

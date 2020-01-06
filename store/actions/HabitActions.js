@@ -1,6 +1,6 @@
 import {
 	CREATE_HABIT,
-	READ_HABIT
+	READ_HABIT,
 	UPDATE_HABIT,
 	DELETE_HABIT,
 	GET_HABITS_FOR_USER
@@ -41,8 +41,8 @@ export const deleteHabit = (habitID) => {
 
 export const getHabitsForUser = (userID) => {
 	return (dispatch) => {
-		axios.get('https://mindofhabit.com/api/app-habits/get-for-user?userID=' + userID).then(function(response) {
-			dispatch({ type: GET_HABITS_FOR_USER, payload: response });
+		axios.get('https://mindofhabit.com/api/app-habits/get-for-user?user_id=' + userID).then(function(response) {
+			dispatch({ type: GET_HABITS_FOR_USER, payload: response.data });
 		});
 	};
 };
