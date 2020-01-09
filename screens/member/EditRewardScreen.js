@@ -3,7 +3,7 @@ import { View, Text, ScrollView, StyleSheet, Platform, Alert, TouchableWithoutFe
 import { useDispatch, useSelector } from 'react-redux';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
-import { rewardError, rewardSuccess, rewardLoading, createReward, readReward, getRewardsForUser } from '../../store/actions/RewardActions';
+import { rewardError, rewardSuccess, rewardLoading, rewardFlag, updateReward, readReward, getRewardsForUser, deleteReward } from '../../store/actions/RewardActions';
 
 import Input from '../../components/base/Input';
 import TextArea from '../../components/base/TextArea';
@@ -13,7 +13,7 @@ import CustomHeaderButton from '../../components/base/CustomHeaderButton';
 import Colors from '../../constants/Colors';
 import MainStyleSheet from '../../styles/MainStyleSheet';
 
-const AddRewardScreen = props => {
+const EditRewardScreen = props => {
 	/* -------------------------- *\
 	|  Screen                      |
 	|------------------------------|
@@ -39,6 +39,7 @@ const AddRewardScreen = props => {
 	const [description, setDescription] = useState('');
 	const [points, setPoints] = useState('');
 
+	const [prevAction, setPrevAction] = useState('');
 	const [busy, setBusy] = useState(false);
 
 	/* -------------------- *\
@@ -47,9 +48,14 @@ const AddRewardScreen = props => {
 
 	const currentUserID = useSelector(state => state.user.current_user_id);
 
+	const rewardID = useSelector(state => state.rewards.current_reward_id);
+	const rewards = useSelector(state => state.rewards.rewards);
+	const reward = useSelector(state => state.rewards.rewards[rewardID]);
+
 	const reward_success = useSelector(state => state.rewards.success);
 	const reward_error = useSelector(state => state.rewards.error);
 	const reward_loading = useSelector(state => state.rewards.loading);
+	const reward_flag = useSelector(state => state.rewards.flag);
 
 	/* -------------------- *\
 	|  4. Effects            |
@@ -63,13 +69,38 @@ const AddRewardScreen = props => {
 
 	// Fired once a reward has been created
 	useEffect(() => {
-		if (reward_success == true) {
+		console.log('[LOG] - useEffect for `reward_success` in `EditRewardScreen`');
+		console.log('[DATA DUMP] - `reward_success` = ' + reward_success);
+		console.log('[DATA DUMP] - `reward_flag` = ' + reward_flag);
+
+		if (reward_success == true && reward_flag == 'update_reward_success') {
+			console.log('[LOG] - Updated reward successfully...');
+			setPrevAction('update_reward_success');
 			dispatch(rewardSuccess(false));
+			dispatch(rewardLoading(true));
 			dispatch(getRewardsForUser(currentUserID));
-			props.navigation.navigate('Rewards');
-		}
+		} else if (reward_success == true && reward_flag == 'delete_reward_success') {
+			console.log('[LOG] - Deleted reward successfully...');
+			setPrevAction('delete_reward_success');
+			dispatch(rewardSuccess(false));
+			dispatch(rewardLoading(true));
+			dispatch(getRewardsForUser(currentUserID));
+		} else if (reward_success == true && reward_flag == 'get_rewards_for_user_success') {
+			console.log('[LOG] - Successfully got rewards from API...');
+			dispatch(rewardFlag('update_reward_success'));
+			dispatch(rewardSuccess(false));
+
+			if (prevAction === 'update_reward_success') {
+				console.log('Navigating to RewardDetails screen...');
+				props.navigation.navigate('RewardDetails');
+			} else if (prevAction === 'delete_reward_success') {
+				console.log('Navigating to Rewards screen...');
+				props.navigation.navigate('Rewards');
+			}
+		} 
 	}, [reward_success]);
 
+	// Fired when loading
 	useEffect(() => {
 		if (reward_loading == true) {
 			setBusy(true);
@@ -77,6 +108,15 @@ const AddRewardScreen = props => {
 			setBusy(false);
 		}
 	}, [reward_loading]);
+
+	// Fired when reward loaded
+	useEffect(() => {
+		if (rewardID in rewards) {
+			setTitle(reward.title);
+			setDescription(reward.description);
+			setPoints(reward.points.toString());
+		}
+	}, [reward]);
 
 	/* -------------------- *\
 	|  5. Functions          |
@@ -97,17 +137,39 @@ const AddRewardScreen = props => {
 	const submitHandler = () => {
 		if (title != "" && description != "" && points != "") {
 			const reward = {
-				user_id: currentUserID,
+				id: rewardID,
 				title: title,
 				description: description,
 				points: points
 			};
 
 			dispatch(rewardLoading(true));
-			dispatch(createReward(reward));
+			dispatch(updateReward(reward));
 		} else {
 			Alert.alert('Error', 'Please fill out all fields.');
 		}
+	};
+
+	const deleteHandler = () => {
+		console.log('[LOG] = Delete prompt shows...');
+		Alert.alert('Confirm', 'Are you sure you want to delete this reward?', [
+			{
+				text: 'Yes',
+				onPress: () => {
+					console.log('[LOG] - User wants to delete reward...');
+					dispatch(rewardLoading(true));
+
+					console.log('[LOG] - Reward with ID ' + rewardID + ' is being destroyed...');
+					dispatch(deleteReward(rewardID));
+				}
+			}, 
+			{
+				text: 'Cancel',
+				onPress: () => {
+					console.log('[LOG] - User did not want to delete reward...');
+				}
+			}
+		]);
 	};
 
 	const isBusy = () => {
@@ -153,7 +215,13 @@ const AddRewardScreen = props => {
 					<View style={{...MainStyleSheet.container, justifyContent: "flex-end", padding: 24}}>
 						<View style={MainStyleSheet.row}>
 							<View style={MainStyleSheet.colOne}>
-								<PrimaryButton title="Create Reward" style={{backgroundColor: Colors.accent}} onPress={submitHandler} />
+								<PrimaryButton title="Update Reward" style={{backgroundColor: Colors.accent}} onPress={submitHandler} />
+							</View>
+						</View>
+
+						<View style={{...MainStyleSheet.row, marginTop: 16}}>
+							<View style={MainStyleSheet.colOne}>
+								<PrimaryButton title="Delete Reward" style={{backgroundColor: Colors.danger}} onPress={deleteHandler} />
 							</View>
 						</View>
 					</View>
@@ -163,9 +231,9 @@ const AddRewardScreen = props => {
 	);	
 };
 
-AddRewardScreen.navigationOptions = navData => {
+EditRewardScreen.navigationOptions = navData => {
 	return {
-		headerTitle: 'Create Reward',
+		headerTitle: 'Edit Reward',
 		headerStyle: {
             backgroundColor: Colors.backgroundDark,
             borderBottomColor: 'black',
@@ -187,4 +255,4 @@ const styles = StyleSheet.create({
 	}
 });
 
-export default AddRewardScreen;
+export default EditRewardScreen;

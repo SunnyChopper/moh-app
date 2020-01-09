@@ -8,38 +8,72 @@ import { createUser, clearError } from '../store/actions/UserActions';
 import Input from '../components/base/Input';
 import PrimaryButton from '../components/base/PrimaryButton';
 
+import Colors from '../constants/Colors';
 import MainStyleSheet from '../styles/MainStyleSheet';
 
 
 const RegisterScreen = props => {
+	/* -------------------------- *\
+	|  Screen                      |
+	|------------------------------|
+	|  1. Dispatch                 |
+	|  2. State variables          |
+	|  3. Selectors                |
+	|  4. Effects                  |
+	|  5. Functions                |
+	|  6. Render                   |
+	\* -------------------------- */
+
+	/* -------------------- *\
+	|  1. Dispatch           |
+	\* -------------------- */
+
 	const dispatch = useDispatch();
 
-	const error = useSelector(state => state.user.error);
-	const isLoggedIn = useSelector(state => state.user.is_logged_in);
+	/* -------------------- *\
+	|  2. State variables    |
+	\* -------------------- */
 
 	const [firstName, setFirstName] = useState('');
 	const [lastName, setLastName] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 
-	useEffect(() => {
-		if (isLoggedIn == true) {
-			props.navigation.navigate('Home');
-		}
-	}, [isLoggedIn]);
+	/* -------------------- *\
+	|  3. Selectors          |
+	\* -------------------- */
+
+	const user_error = useSelector(state => state.user.error);
+	const user_success = useSelector(state => state.user.success);
+	const user_loading = useSelector(state => state.user.loading);
+	const user_flag = useSelector(state => state.user.flag);
+
+	/* -------------------- *\
+	|  4. Effects            |
+	\* -------------------- */
 
 	useEffect(() => {
-		if (error != "") {
-			Alert.alert('Error', error, [
-			{
-				text: 'OK',
-				onPress: () => {
-					dispatch(clearError());
-				}
-			}
-			]);
+		if (user_error != "") {
+			Alert.alert('Error', user_error, [{ text: 'OK', onPress: () => { dispatch(userError('')) }}]);
 		}
-	}, [error]);
+	}, [user_error]);
+
+	useEffect(() => {
+		if (user_success == true && user_flag == 'create_user_success') {
+			saveUserToMemory();
+			props.navigation.navigate('Home');
+		}
+	}, [user_success]);
+
+	/* -------------------- *\
+	|  5. Functions          |
+	\* -------------------- */
+
+	const saveUserToMemory = () => {
+		AsyncStorage.setItem('current_user_id', JSON.stringify(currentUserID));
+		AsyncStorage.setItem('current_user', JSON.stringify(currentUser));
+		AsyncStorage.setItem('is_logged_in', JSON.stringify(isLoggedIn));
+	}
 
 	const isEmailValid = (email) => {
 		let pattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -72,7 +106,6 @@ const RegisterScreen = props => {
 				console.log("Email is not valid.");
 				Alert.alert('Error', 'Please enter in a valid email.');
 			} else {
-				console.log("Sending action");
 				const user = {
 					first_name: firstName,
 					last_name: lastName,
@@ -84,6 +117,10 @@ const RegisterScreen = props => {
 			}
 		}
 	};
+
+	/* -------------------- *\
+	|  6. Render             |
+	\* -------------------- */
 
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>

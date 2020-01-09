@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Platform, KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, Platform, KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback, Alert } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { habitError, habitSuccess, habitLoading, habitFlag, createHabit, addToggle } from '../../store/actions/HabitActions';
 
 import Input from '../../components/base/Input';
 import TextArea from '../../components/base/TextArea';
@@ -9,10 +12,76 @@ import Colors from '../../constants/Colors';
 import MainStyleSheet from '../../styles/MainStyleSheet';
 
 const AddHabitScreen = props => {
+	/* -------------------------- *\
+	|  Screen                      |
+	|------------------------------|
+	|  1. Dispatch                 |
+	|  2. State variables          |
+	|  3. Selectors                |
+	|  4. Effects                  |
+	|  5. Functions                |
+	|  6. Render                   |
+	\* -------------------------- */
+
+	/* -------------------- *\
+	|  1. Dispatch           |
+	\* -------------------- */
+
+	const dispatch = useDispatch();
+
+	/* -------------------- *\
+	|  2. State variables    |
+	\* -------------------- */
+
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
 	const [why, setWhy] = useState('');
 	const [points, setPoints] = useState(0);
+	const [busy, setBusy] = useState(false);
+
+	/* -------------------- *\
+	|  3. Selectors          |
+	\* -------------------- */
+
+	const currentUserID = useSelector(state => state.user.current_user_id);
+	const currentUser = useSelector(state => state.user.current_user);
+
+	const habit_error = useSelector(state => state.habits.error);
+	const habit_success = useSelector(state => state.habits.success);
+	const habit_loading = useSelector(state => state.habits.loading);
+	const habit_flag = useSelector(state => state.habits.flag);
+
+	/* -------------------- *\
+	|  4. Effects            |
+	\* -------------------- */
+
+	useEffect(() => {
+		if (habit_error != "" && habit_error != null) {
+			Alert.alert('Error', habit_error, [{ text: 'OK', onPress: () => { dispatch(habitError('')); } }]);
+		}
+	}, [habit_error]);
+
+	useEffect(() => {
+		if (habit_success == true && habit_flag == 'create_habit_success') {
+			dispatch(habitSuccess(false));
+			dispatch(getHabitsForUser(currentUserID));
+		} else if (habit_success == true && habit_flag == 'get_habits_for_user') {
+			dispatch(habitSuccess(false));
+			props.navigation.navigate('Habits');
+		}
+	}, [habit_success]);
+
+	useEffect(() => {
+		if (habit_loading == true) {
+			setBusy(true);
+		} else {
+			setBusy(false);
+		}
+	}, [habit_loading]);
+
+	/* -------------------- *\
+	|  5. Functions          |
+	\* -------------------- */
 
 	const titleTextChange = (title) => {
 		setTitle(title);
@@ -31,15 +100,34 @@ const AddHabitScreen = props => {
 	};
 
 	const submitHabitHandler = () => {
-		console.log("Title: " + title);
-		console.log("Description: " + description);
-		console.log("Why: " + why);
-		console.log("Points: " + points);
+		if (title != "" && description != "" && why != "" && points != "") {
+			const postVariables = {
+				user_id: currentUserID,
+				points: points,
+				title: title,
+				description: description,
+				why: why
+			};
+			console.log(postVariables);
+
+			// Add the habit
+			dispatch(createHabit(postVariables));
+
+			// Go back to habits page
+			props.navigation.navigate('Home');
+		} else {
+			Alert.alert('Error', 'Please fill out all fields.');
+		}
 	};
 
+	/* -------------------- *\
+	|  6. Render             |
+	\* -------------------- */
+
 	return (
-		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-			<KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={200} style={styles.screen}>
+		<KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={100} style={styles.screen}>
+			<ScrollView style={MainStyleSheet.container}>
+				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 					<View style={MainStyleSheet.container}>
 						<View style={MainStyleSheet.row}>
 							<View style={MainStyleSheet.colOne}>
@@ -61,7 +149,7 @@ const AddHabitScreen = props => {
 
 						<View style={{...MainStyleSheet.row, marginTop: 16}}>
 							<View style={MainStyleSheet.colOne}>
-								<Input label="Points for Completion" changeText={pointsTextChange} />
+								<Input label="Points for Completion" keyboardType="number-pad" changeText={pointsTextChange} />
 							</View>
 						</View>
 
@@ -71,8 +159,9 @@ const AddHabitScreen = props => {
 							</View>
 						</View>
 					</View>
-			</KeyboardAvoidingView>
-		</TouchableWithoutFeedback>
+				</TouchableWithoutFeedback>
+			</ScrollView>
+		</KeyboardAvoidingView>
 	);
 };
 
@@ -94,10 +183,8 @@ AddHabitScreen.navigationOptions = navData => {
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
-		width: '100%',
 		height: '100%',
-		padding: 24,
-		justifyContent: 'center'
+		padding: 24
 	}
 });
 
