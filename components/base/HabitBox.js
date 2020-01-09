@@ -12,7 +12,6 @@ const HabitBox = props => {
 				<View style={MainStyleSheet.row}>
 					<View style={{...MainStyleSheet.colOne, marginBottom: 12}}>
 						<Text style={styles.title}>{props.title}</Text>
-						<Text style={styles.priority}>Priority: {props.priority} • Level {props.level}</Text>
 						<Text style={styles.text}>{props.description}</Text>
 						<Text style={styles.points}>Points for Completion: {props.points}</Text>
 					</View>
@@ -40,7 +39,7 @@ const styles = StyleSheet.create({
 		fontFamily: 'montserrat-bold',
 		fontSize: 20,
 		lineHeight: 25,
-		marginBottom: 4,
+		marginBottom: 8,
 		color: Colors.accent
 	},
 	priority: {
