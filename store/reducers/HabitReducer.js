@@ -3,21 +3,32 @@ import {
 	READ_HABIT,
 	UPDATE_HABIT,
 	DELETE_HABIT,
-	GET_HABITS_FOR_USER
+	GET_HABITS_FOR_USER,
+	HABIT_ERROR,
+	HABIT_SUCCESS,
+	HABIT_LOADING,
+	HABIT_FLAG
 } from '../actions/types';
 
 const initialState = {
 	current_habit_id: 0,
 	habit_ids: [],
-	habits: []	
+	habits: {},
+	error: '',
+	success: false,
+	loading: false,
+	flag: ''
 };
 
 export default (state = initialState, action) => {
 	switch (action.type) {
 		case CREATE_HABIT:
+			const createHabits = state.habits;
+			createHabits[action.payload['id']] = action.payload;
+
 			return {
 				...state,
-				habits: habits.push(action.payload)
+				habits: createHabits
 			};
 		case READ_HABIT:
 			return {
@@ -25,33 +36,55 @@ export default (state = initialState, action) => {
 				current_habit_id: action.payload
 			};
 		case UPDATE_HABIT:
-			const newHabits = state.habits;
-			newHabits.forEach(function(item) {
-				if (item.id == action.payload.id) {
-					item = action.payload;
+			const updateHabits = state.habits;
+			const keys = Object.keys(updateHabits);
+			keys.forEach(function(key) {
+				if (key == action.payload['id']) {
+					updateHabits[key] = action.payload;
 				}
 			});
 
 			return {
 				...state,
-				habits: newHabits
+				habits: updateHabits
 			};
 		case DELETE_HABIT:
-			newHabits = state.habits;
-			for (var i = 0; i < newHabits.length; i++) {
-				if (newHabits[i].id == action.payload.id) {
-					newHabits.splice(i, 1);
+			const deleteHabits = state.habits;
+			for (var i = 0; i < deleteHabits.length; i++) {
+				if (deleteHabits[i].id == action.payload.id) {
+					deleteHabits.splice(i, 1);
 				}
 			}
 
 			return {
 				...state,
-				habits: newHabits
+				habits: deleteHabits
 			};
 		case GET_HABITS_FOR_USER:
 			return {
 				...state,
-				habits: action.payload
+				habit_ids: action.payload['habit_ids'],
+				habits: action.payload['habits']
+			};
+		case HABIT_ERROR:
+			return {
+				...state,
+				error: action.payload
+			}
+		case HABIT_SUCCESS:
+			return {
+				...state,
+				success: action.payload
+			}
+		case HABIT_LOADING:
+			return {
+				...state,
+				loading: action.payload
+			};
+		case HABIT_FLAG:
+			return {
+				...state,
+				flag: action.payload
 			};
 		default: return state;
 	}	
