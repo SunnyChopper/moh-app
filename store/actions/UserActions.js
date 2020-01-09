@@ -16,6 +16,7 @@ import {
 } from './types';
 
 import axios from 'axios';
+import { trackEvent } from '../../analytics/analytics';
 
 export const createUser = (user) => {
 	const postVariables = {
@@ -28,48 +29,73 @@ export const createUser = (user) => {
 	return (dispatch) => {
 		axios.post('https://mindofhabit.com/api/app-users/create', {postVariables}).then(function(response) {
 			if (response.data['success'] == true) {
-				dispatch({ type: USER_FLAG, payload: 'create_user_success' });
+				// Payload
 				dispatch({ type: CREATE_USER, payload: response.data['user'] });
+
+				// Directional data
+				dispatch({ type: USER_FLAG, payload: 'create_user_success' });
 				dispatch({ type: USER_SUCCESS, payload: true });
 				dispatch({ type: USER_LOADING, payload: false });
+
+				// Analytics
+				trackEvent('EVENT_CREATE_USER_SUCCESS');
 			} else {
+				// Directional data
+				dispatch({ type: USER_FLAG, payload: 'create_user_failure' });
 				dispatch({ type: USER_ERROR, payload: response.data['error'] });
 				dispatch({ type: USER_LOADING, payload: false });
+
+				// Analytics
+				trackEvent('EVENT_CREATE_USER_FAILED');
 			}
 		}).catch(function(error) {
+			// Directional data
+			dispatch({ type: USER_FLAG, payload: 'create_user_failure' });
 			dispatch({ type: USER_ERROR, payload: error });
 			dispatch({ type: USER_LOADING, payload: false });
+
+			// Analytics
+			trackEvent('EVENT_CREATE_USER_FAILED');
 		});
 	};
 };
 
 export const loginUser = (email, password) => {
 	return (dispatch) => {
-		console.log('[LOG] - Function `loginUser` called from `UserActions`');
 		const postVariables = {
 			email: email,
 			password: password
 		};
 
-		console.log('[LOG] - Function `loginUser` has variable `postVariables`:');
-		console.log('[DATA DUMP]');
-		console.log(postVariables);
-
 		axios.post('https://mindofhabit.com/api/app-users/login', {postVariables}).then(function(response) {
-			console.log('[LOG] - Function `loginUser` has responded from API');
-			console.log(response.data);
 			if (response.data['success'] == true) {
-				dispatch({ type: USER_FLAG, payload: 'login_user_success' });
+				// Payload
 				dispatch({ type: LOGIN_USER, payload: response.data['user'] });
+
+				// Directional data
+				dispatch({ type: USER_FLAG, payload: 'login_user_success' });
 				dispatch({ type: USER_SUCCESS, payload: true });
 				dispatch({ type: USER_LOADING, payload: false });
+
+				// Analytics
+				trackEvent('EVENT_LOGIN_USER_SUCCESS');
 			} else {
+				// Directional data
+				dispatch({ type: USER_FLAG, payload: 'login_user_failure' });
 				dispatch({ type: USER_ERROR, payload: response.data['error'] });
 				dispatch({ type: USER_LOADING, payload: false });
+
+				// Analytics
+				trackEvent('EVENT_LOGIN_USER_FAILED');
 			}
 		}).catch(function(error) {
+			// Directional data
+			dispatch({ type: USER_FLAG, payload: 'login_user_failure' });
 			dispatch({ type: USER_ERROR, payload: error });
 			dispatch({ type: USER_LOADING, payload: false });
+
+			// Analytics
+			trackEvent('EVENT_LOGIN_USER_FAILED');
 		});
 	};
 };
@@ -83,8 +109,35 @@ export const logoutUser = () => {
 
 export const updateUser = (user) => {
 	return (dispatch) => {
-		axios.post('https://mindofhabit.com/api/app-users/update', {user}).then(function(response) {
-			dispatch({ type: UPDATE_USER, payload: user });
+		axios.post('https://mindofhabit.com/api/app-users/update', {user}).then(function(response) { 
+			if (response.data['success'] == true) {
+				// Payload
+				dispatch({ type: UPDATE_USER, payload: response.data['user'] });
+
+				// Directional data
+				dispatch({ type: USER_FLAG, payload: 'update_user_success' });
+				dispatch({ type: USER_SUCCESS, payload: true });
+				dispatch({ type: USER_LOADING, payload: false });
+
+				// Analytics
+				trackEvent('EVENT_UPDATE_USER_SUCCESS');
+			} else {
+				// Directional data
+				dispatch({ type: USER_FLAG, payload: 'update_user_failure' });
+				dispatch({ type: USER_ERROR, payload: response.data['error'] });
+				dispatch({ type: USER_LOADING, payload: false });
+
+				// Analytics
+				trackEvent('EVENT_UPDATE_USER_FAILED');
+			}
+		}).catch(function(error) {
+			// Directional data
+			dispatch({ type: USER_FLAG, payload: 'update_user_failure' });
+			dispatch({ type: USER_ERROR, payload: error });
+			dispatch({ type: USER_LOADING, payload: false });
+
+			// Analytics
+			trackEvent('EVENT_UPDATE_USER_FAILED');
 		});
 	};
 };
@@ -92,7 +145,34 @@ export const updateUser = (user) => {
 export const deleteUser = (userID) => {
 	return (dispatch) => {
 		axios.post('https://mindofhabit.com/api/app-users/delete', {user_id: userID}).then(function(response) {
-			dispatch({ type: DELETE_USER, payload: response });
+			if (response.data['success'] == true) {
+				// Payload
+				dispatch({ type: DELETE_USER, payload: userID });
+
+				// Directional data
+				dispatch({ type: USER_FLAG, payload: 'delete_user_success' });
+				dispatch({ type: USER_SUCCESS, payload: true });
+				dispatch({ type: USER_LOADING, payload: false });
+
+				// Analytics
+				trackEvent('EVENT_DELETE_USER_SUCCESS');
+			} else {
+				// Directional data
+				dispatch({ type: USER_FLAG, payload: 'delete_user_failure' });
+				dispatch({ type: USER_ERROR, payload: response.data['error'] });
+				dispatch({ type: USER_LOADING, payload: false });
+
+				// Analytics
+				trackEvent('EVENT_DELETE_USER_FAILED');
+			}
+		}).catch(function(error) {
+			// Directional data
+			dispatch({ type: USER_FLAG, payload: 'delete_user_failure' });
+			dispatch({ type: USER_ERROR, payload: error });
+			dispatch({ type: USER_LOADING, payload: false });
+
+			// Analytics
+			trackEvent('EVENT_DELETE_USER_FAILED');
 		});
 	};
 };
@@ -107,53 +187,103 @@ export const overwriteUser = (user) => {
 export const redeemReward = (rewardID, userID) => {
 	return (dispatch) => {
 		axios.post('https://mindofhabit.com/api/app-rewards/redeem', { reward_id: rewardID, user_id: userID }).then(function(response) {
-			dispatch({ type: GET_REWARDS_FOR_USER, payload: response });
+			if (response.data['success'] == true) {
+				// Payload
+				dispatch({ type: GET_REWARDS_FOR_USER, payload: response });
+
+				// Directional data
+				dispatch({ type: USER_FLAG, payload: 'get_rewards_for_user_success' });
+				dispatch({ type: USER_SUCCESS, payload: true });
+				dispatch({ type: USER_LOADING, payload: false });
+
+				// Analytics
+				trackEvent('EVENT_GET_REWARDS_FOR_USER_SUCCESS');
+			} else {
+				// Directional data
+				dispatch({ type: USER_FLAG, payload: 'get_rewards_for_user_failure' });
+				dispatch({ type: USER_ERROR, payload: response.data['error'] });
+				dispatch({ type: USER_LOADING, payload: false });
+
+				// Analytics
+				trackEvent('EVENT_GET_REWARDS_FOR_USER_FAILED');
+			}
+		}).catch(function(error) {
+			// Directional data
+			dispatch({ type: USER_FLAG, payload: 'delete_user_failure' });
+			dispatch({ type: USER_ERROR, payload: error });
+			dispatch({ type: USER_LOADING, payload: false });
+
+			// Analytics
+			trackEvent('EVENT_GET_REWARDS_FOR_USER_FAILED');
 		});
 	};
 };
 
 export const getUser = (userID) => {
 	return (dispatch) => {
-		console.log('[LOG] - Function `getUser` called upon in `UserActions`');
-		console.log('[LOG] - Function `getUser` got parameter userID=' + userID);
 		axios.get('https://mindofhabit.com/api/app-users/read?user_id=' + userID).then(function(response) {
-			console.log('[LOG] - Received response to GET request for user.');
 			if (response.data['success'] == true) {
-				console.log('Successfully got updated user...');
-				console.log(response.data);
-				dispatch({ type: USER_FLAG, payload: 'get_user_success' });
+				// Payload
 				dispatch({ type: GET_USER, payload: response.data['user'] });
+
+				// Directional data
+				dispatch({ type: USER_FLAG, payload: 'get_user_success' });
 				dispatch({ type: USER_SUCCESS, payload: true });
 				dispatch({ type: USER_LOADING, payload: false });
+
+				// Analytics
+				trackEvent('EVENT_GET_USER_SUCCESS');
 			} else {
+				// Directional data
 				dispatch({ type: USER_FLAG, payload: 'get_user_failure' });
 				dispatch({ type: USER_ERROR, payload: response.data['error'] });
 				dispatch({ type: USER_LOADING, payload: false });
+
+				// Analytics
+				trackEvent('EVENT_GET_USER_FAILED');
 			}
 		}).catch(function(error) {
+			// Directional data
+			dispatch({ type: USER_FLAG, payload: 'get_user_failure' });
 			dispatch({ type: USER_ERROR, payload: error });
+			dispatch({ type: USER_LOADING, payload: false });
+
+			// Analytics
+			trackEvent('EVENT_GET_USER_FAILED');
 		});
 	};
 }
 
 export const getUserPoints = (userID) => {
 	return (dispatch) => {
-		console.log('Getting an updated points for user ' + userID);
 		axios.get('https://mindofhabit.com/api/app-users/get-points?user_id=' + userID).then(function(response) {
 			if (response.data['success'] == true) {
-				console.log('Successfully got updated points...');
-				console.log(response.data);
-				dispatch({ type: USER_FLAG, payload: 'get_user_points_success' });
+				// Payload
 				dispatch({ type: GET_USER_POINTS, payload: response.data['points'] });
+
+				// Directional data
+				dispatch({ type: USER_FLAG, payload: 'get_user_points_success' });
 				dispatch({ type: USER_SUCCESS, payload: true });
 				dispatch({ type: USER_LOADING, payload: false });
+
+				// Analytics
+				trackEvent('EVENT_GET_USER_POINTS_SUCCESS');
 			} else {
 				dispatch({ type: USER_FLAG, payload: 'get_user_points_failure' });
 				dispatch({ type: USER_ERROR, payload: response.data['error'] });
 				dispatch({ type: USER_LOADING, payload: false });
+
+				// Analytics
+				trackEvent('EVENT_GET_USER_POINTS_FAILED');
 			}
 		}).catch(function(error) {
+			// Directional data
+			dispatch({ type: USER_FLAG, payload: 'get_user_points_failure' });
 			dispatch({ type: USER_ERROR, payload: error });
+			dispatch({ type: USER_LOADING, payload: false });
+
+			// Analytics
+			trackEvent('EVENT_GET_USER_POINTS_FAILED');
 		});
 	};
 };

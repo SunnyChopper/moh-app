@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, ScrollView, Platform, ActivityIndicator, Alert 
 import { useDispatch, useSelector } from 'react-redux';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
+import { trackEvent } from '../../analytics/analytics';
+
 import { rewardError, rewardSuccess, rewardLoading, readReward, getRewardsForUser } from '../../store/actions/RewardActions';
 
 import MainStyleSheet from '../../styles/MainStyleSheet';

@@ -6,41 +6,50 @@ import {
 	GET_LOGS_FOR_LEVEL,
 	LOG_ERROR,
 	LOG_SUCCESS,
-	LOG_LOADING
+	LOG_LOADING,
+	LOG_FLAG
 } from './types';
 
 import axios from 'axios';
+import { trackEvent } from '../../analytics/analytics';
 
 export const createLog = (log) => {
 	return (dispatch) => {
-		console.log('[LOG] - createLog function called upon within `HabitLogActions`.');
 		const postVariables = {
 			user_id: log["user_id"],
 			habit_id: log["habit_id"],
 			level_id: log["level_id"]
 		};
 
-		console.log('[LOG] - createLog created variable `postVariables`.');
-		console.log('[DATA DUMP]');
-		console.log(postVariables);
-
 		axios.post('https://mindofhabit.com/api/app-habit-logs/create', {postVariables}).then(function(response) {
 			if (response.data['success'] == true) {
-				console.log('[LOG] - createLog function successfully executed on API.');
-				console.log('[DATA DUMP]');
-				console.log(response.data);
+				// Payload
 				dispatch({ type: CREATE_LOG, payload: response.data['log'] });
+
+				// Directional data
 				dispatch({ type: LOG_SUCCESS, payload: true });
 				dispatch({ type: LOG_LOADING, payload: false });
+				dispatch({ type: LOG_FLAG, payload: 'create_log_success' });
+
+				// Analytics
+				trackEvent('EVENT_CREATE_LOG_SUCCESS');
 			} else {
-				console.log('[LOG] - createLog function failed executed on API.');
-				console.log('[DATA DUMP]');
-				console.log(response.data['error']);
+				// Directional data
 				dispatch({ type: LOG_ERROR, payload: response.data['error'] });
 				dispatch({ type: LOG_LOADING, payload: false });
+				dispatch({ type: LOG_FLAG, payload: 'create_log_failure' });
+
+				// Analytics
+				trackEvent('EVENT_CREATE_LOG_FAILED');
 			}
 		}).catch(function(error) {
+			// Directional data
 			dispatch({ type: LOG_ERROR, payload: error });
+			dispatch({ type: LOG_LOADING, payload: false });
+			dispatch({ type: LOG_FLAG, payload: 'create_log_failure' });
+
+			// Analytics
+			trackEvent('EVENT_CREATE_LOG_FAILED');
 		});
 	};
 };
@@ -53,13 +62,33 @@ export const deleteLog = (logID) => {
 
 		axios.post('https://mindofhabit.com/api/app-habit-logs/delete', {postVariables}).then(function(response) {
 			if (response.data['success'] == true) {
+				// Payload
 				dispatch({ type: DELETE_LOG, payload: logID });
+
+				// Directional data
 				dispatch({ type: LOG_SUCCESS, payload: true });
+				dispatch({ type: LOG_LOADING, payload: false });
+				dispatch({ type: LOG_FLAG, payload: 'delete_log_success' });
+
+				// Analytics
+				trackEvent('EVENT_DELETE_LOG_SUCCESS');
 			} else {
+				// Directional data
 				dispatch({ type: LOG_ERROR, payload: response.data['error'] });
+				dispatch({ type: LOG_LOADING, payload: false });
+				dispatch({ type: LOG_FLAG, payload: 'delete_log_failure' });
+
+				// Analytics
+				trackEvent('EVENT_DELETE_LOG_FAILED');
 			}
 		}).catch(function(error) {
+			// Directional data
 			dispatch({ type: LOG_ERROR, payload: error });
+			dispatch({ type: LOG_LOADING, payload: false });
+			dispatch({ type: LOG_FLAG, payload: 'delete_log_failure' });
+
+			// Analytics
+			trackEvent('EVENT_DELETE_LOG_FAILED');
 		});
 	};
 };
@@ -68,13 +97,33 @@ export const getLogsForUser = (userID) => {
 	return (dispatch) => {
 		axios.get('https://mindofhabit.com/api/app-habit-logs/get-for-user?user_id=' + userID).then(function(response) {
 			if (response.data['success'] == true) {
+				// Payload
 				dispatch({ type: GET_LOGS_FOR_USER, payload: response.data });
+
+				// Directional data
 				dispatch({ type: LOG_SUCCESS, payload: true });
+				dispatch({ type: LOG_LOADING, payload: false });
+				dispatch({ type: LOG_FLAG, payload: 'get_logs_for_user_success' });
+
+				// Analytics
+				trackEvent('GET_LOGS_FOR_USER_SUCCESS');
 			} else {
+				// Directional data
 				dispatch({ type: LOG_ERROR, payload: response.data['error'] });
+				dispatch({ type: LOG_LOADING, payload: false });
+				dispatch({ type: LOG_FLAG, payload: 'get_logs_for_user_failure' });
+
+				// Analytics
+				trackEvent('GET_LOGS_FOR_USER_FAILED');
 			}
 		}).catch(function(error) {
+			// Directional data
 			dispatch({ type: LOG_ERROR, payload: error });
+			dispatch({ type: LOG_LOADING, payload: false });
+			dispatch({ type: LOG_FLAG, payload: 'delete_log_failure' });
+
+			// Analytics
+			trackEvent('GET_LOGS_FOR_USER_FAILED');
 		});
 	};
 };
@@ -112,4 +161,11 @@ export const logLoading = (toggle) => {
 		type: LOG_LOADING,
 		payload: toggle
 	};
+};
+
+export const logFlag = (flag) => {
+	return {
+		type: LOG_FLAG,
+		payload: flag
+	}
 };

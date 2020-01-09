@@ -3,6 +3,8 @@ import { AsyncStorage, TouchableWithoutFeedback, Alert, Keyboard, KeyboardAvoidi
 import * as UserActions from '../store/actions/UserActions';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { trackEvent, setUserID } from '../analytics/analytics';
+
 import Card from '../components/base/Card';
 import Input from '../components/base/Input';
 import PrimaryButton from '../components/base/PrimaryButton';
@@ -65,12 +67,14 @@ const LoginScreen = props => {
 		console.log('[LOG] - Effect `user_success` called from LoginScreen');
 		console.log('[DATA DUMP] - `user_success` = ' + user_success);
 		console.log('[DATA DUMP] - `user_flag` = ' + user_flag);
+
 		if (user_success == true && user_flag == 'login_user_success') {
 			saveUserToMemory();
 			props.navigation.navigate('Home');
 			dispatch(userSuccess(false));
 		} else if (user_success == true && user_flag == 'get_user_success') {
 			saveUserToMemory();
+			trackEvent('EVENT_RELOGIN_SUCCESS');
 			dispatch(userSuccess(false));
 			props.navigation.navigate('Home');
 		}
@@ -98,6 +102,11 @@ const LoginScreen = props => {
 		console.log('[LOG] - Function `saveUserToMemory` called from LoginScreen');
 		console.log('[DATA DUMP] - `current_user_id` = ' + JSON.stringify(currentUserID));
 		console.log('[DATA DUMP] - `current_user` = ' + JSON.stringify(currentUser));
+
+		// Config for analytics
+		setUserID(currentUserID);
+
+		// Store into hard drive
 		AsyncStorage.setItem('current_user_id', JSON.stringify(currentUserID));
 		AsyncStorage.setItem('current_user', JSON.stringify(currentUser));
 		AsyncStorage.setItem('is_logged_in', JSON.stringify(isLoggedIn));
@@ -139,6 +148,8 @@ const LoginScreen = props => {
 			dispatch(errorLoggingIn('Please enter in a password.'));
 			return;
 		}
+
+		trackEvent('EVENT_LOGIN_BUTTON_PRESSED');
 		
 		console.log('[LOG] - Logging in user with email (' + email + ') and password (' + password + ')');
 		dispatch(loginUser(email, password));

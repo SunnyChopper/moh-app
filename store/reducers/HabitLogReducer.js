@@ -6,7 +6,8 @@ import {
 	GET_LOGS_FOR_LEVEL,
 	LOG_ERROR,
 	LOG_SUCCESS,
-	LOG_LOADING
+	LOG_LOADING,
+	LOG_FLAG
 } from '../actions/types';
 
 const initialState = {
@@ -17,7 +18,8 @@ const initialState = {
 	log_ids: [],
 	error: '',
 	success: false,
-	loading: false
+	loading: false,
+	flag: ''
 };
 
 export default (state = initialState, action) => {
@@ -73,6 +75,11 @@ export default (state = initialState, action) => {
 			return {
 				...state,
 				loading: action.payload
+			};
+		case LOG_FLAG:
+			return {
+				...state,
+				flag: action.payload
 			};
 		default: return state;
 	}

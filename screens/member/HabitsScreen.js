@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { View, ActivityIndicator, Text, ScrollView, StyleSheet, Platform, Alert } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { useDispatch, useSelector } from 'react-redux';
-import analytics from '@react-native-firebase/analytics';
 
 import { habitSuccess, habitError, habitLoading, habitFlag, readHabit, getHabitsForUser } from '../../store/actions/HabitActions';
 import { levelLoading, levelSuccess, getLevelsForHabit } from '../../store/actions/HabitLevelActions';

@@ -6,6 +6,8 @@ import React, { useState } from 'react';
 import { AsyncStorage, View, Image, StyleSheet } from 'react-native';
 import Onboarding from 'react-native-onboarding-swiper';
 
+import { trackEvent } from '../analytics/analytics';
+
 /* ---------------------- *\
 	Constants
 \* ---------------------- */
@@ -18,13 +20,25 @@ const OnboardingScreen = props => {
 			onboard: true
 		}));
 
+		trackEvent('EVENT_ONBOARD_COMPLETE');
+
+		props.navigation.navigate('Login');
+	};
+
+	const skipOnboardingHandler = async () => {
+		await AsyncStorage.setItem('onboard', JSON.stringify({
+			onboard: true
+		}));
+
+		trackEvent('EVENT_ONBOARD_COMPLETE');
+
 		props.navigation.navigate('Login');
 	};
 
 	return (
 		<Onboarding
 			onDone = {completeOnboardingHandler}
-			onSkip = {completeOnboardingHandler}
+			onSkip = {skipOnboardingHandler}
 			pages = {[
 				{
 					backgroundColor: Colors.backgroundLight,

@@ -12,6 +12,8 @@ import { NavigationActions } from 'react-navigation';
 
 import AppNavigator from './AppNavigator';
 
+import { initAnalytics } from '../analytics/analytics';
+
 const MasterNavigator = props => {
 	const [onboard, setOnboard] = useState(false);
 
@@ -26,6 +28,7 @@ const MasterNavigator = props => {
 	const navRef = useRef();
 
 	useEffect(() => {
+		initAnalytics();
 		fetchOnboard();
 	}, []);
 

@@ -45,6 +45,7 @@ export const GET_LOGS_FOR_LEVEL = 'get_logs_for_level';
 export const LOG_ERROR = 'log_error';
 export const LOG_SUCCESS = 'log_success';
 export const LOG_LOADING = 'log_loading';
+export const LOG_FLAG = 'log_flag';
 
 // Rewards
 export const CREATE_REWARD = 'create_reward';

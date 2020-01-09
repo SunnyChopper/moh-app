@@ -3,6 +3,8 @@ import { View, Alert, Text, Image, StyleSheet, TouchableWithoutFeedback, Keyboar
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 
+import { trackEvent, setUserID } from '../analytics/analytics';
+
 import { createUser, clearError } from '../store/actions/UserActions';
 
 import Input from '../components/base/Input';
@@ -70,6 +72,10 @@ const RegisterScreen = props => {
 	\* -------------------- */
 
 	const saveUserToMemory = () => {
+		// Set for analytics
+		setUserID(currentUserID);
+
+		// Save to hard drive
 		AsyncStorage.setItem('current_user_id', JSON.stringify(currentUserID));
 		AsyncStorage.setItem('current_user', JSON.stringify(currentUser));
 		AsyncStorage.setItem('is_logged_in', JSON.stringify(isLoggedIn));
@@ -97,13 +103,13 @@ const RegisterScreen = props => {
 	};
 
 	const registerButtonHandler = () => {
-		console.log("Registering...");
 		if (firstName == "" || lastName == "" || email == "" || password == "") {
 			console.log("Please fill out all fields.");
 			Alert.alert('Error', 'Please fill out all fields.');
 		} else {
 			if (isEmailValid(email) == false) {
 				console.log("Email is not valid.");
+				trackEvent('EVENT_INVALID_EMAIL');
 				Alert.alert('Error', 'Please enter in a valid email.');
 			} else {
 				const user = {
@@ -112,6 +118,8 @@ const RegisterScreen = props => {
 					email: email,
 					password: password
 				};
+
+				trackEvent('EVENT_REGISTER_BUTTON_PRESSED');
 
 				dispatch(createUser(user));
 			}
