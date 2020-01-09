@@ -1,6 +1,11 @@
 import { StyleSheet } from 'react-native';
 
 const MainStyleSheet = StyleSheet.create({
+	screen: {
+		flex: 1,
+		width: '100%',
+		height: '100%'
+	},
 	container: {
 		width: '100%',
 		flexDirection: 'column'
